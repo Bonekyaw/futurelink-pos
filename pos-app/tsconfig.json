@@ -5,10 +5,14 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@shared/*": [
+        "../shared/*"
       ]
     }
   },
   "include": [
+    "../shared/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",

@@ -5,6 +5,7 @@ I'll generate a comprehensive step-by-step development roadmap for your Restaura
 ## 📋 Phase 1: Foundation & Database
 
 ### **Prompt 1.1 — Database Schema Design (Prisma)**
+
 ```
 Design a SQLite schema using Prisma for the Restaurant POS with these entities:
 
@@ -26,6 +27,7 @@ Generate the schema.prisma file with proper relations and constraints.
 ```
 
 ### **Prompt 1.2 — Real-time Infrastructure Setup**
+
 ```
 Set up real-time synchronization between Admin Dashboard and Waiter App:
 
@@ -48,6 +50,7 @@ Deliver: socket.ts config, event types, and connection handler with auth.
 ## 📋 Phase 2: Backend API (Next.js)
 
 ### **Prompt 2.1 — Authentication System**
+
 ```
 Build the authentication layer:
 
@@ -55,7 +58,7 @@ Build the authentication layer:
    - API: POST /api/auth/login with 4-digit PIN
    - JWT token generation (short expiry: 8 hours)
    - Middleware to protect routes and validate roles
-   
+
 2. **Session Management**:
    - HTTP-only cookies for web (Admin)
    - Bearer tokens for mobile (Waiter app)
@@ -70,6 +73,7 @@ Implement using NextAuth.js or custom JWT implementation with iron-session.
 ```
 
 ### **Prompt 2.2 — Order Management API**
+
 ```
 Create the core order business logic with strict validation:
 
@@ -101,6 +105,7 @@ Use tRPC or standard REST with Zod validation. Ensure all endpoints verify user 
 ```
 
 ### **Prompt 2.3 — Kitchen Display & Delivery System**
+
 ```
 Build the kitchen coordination endpoints:
 
@@ -124,6 +129,7 @@ Build the kitchen coordination endpoints:
 ```
 
 ### **Prompt 2.4 — Payment Workflow API**
+
 ```
 Implement the two-step payment authorization:
 
@@ -150,6 +156,7 @@ Validation: Ensure only ADMIN can confirm, waiters can only initiate.
 ```
 
 ### **Prompt 2.5 — Audit & Reporting**
+
 ```
 Create comprehensive audit trails:
 
@@ -175,6 +182,7 @@ Create comprehensive audit trails:
 ## 📋 Phase 3: Admin Dashboard (Next.js)
 
 ### **Prompt 3.1 — Dashboard Layout & Real-time Setup**
+
 ```
 Build the Admin Dashboard UI (Counter Computer):
 
@@ -197,6 +205,7 @@ Use shadcn/ui components, Tailwind CSS, and React Query for server state.
 ```
 
 ### **Prompt 3.2 — Table Management View**
+
 ```
 Create the table grid interface:
 
@@ -204,7 +213,7 @@ Create the table grid interface:
    - Masonry or CSS Grid layout
    - Each table card shows: Table number, current status, order total, elapsed time
    - Click table to view current order details
-   
+
 2. **Order Detail Modal**:
    - List of items with statuses (color-coded)
    - Action buttons: Print Bill, Confirm Payment, Cancel Order
@@ -221,6 +230,7 @@ Implement optimistic UI updates for status changes.
 ```
 
 ### **Prompt 3.3 — Payment Confirmation Interface**
+
 ```
 Build the payment authorization UI:
 
@@ -247,43 +257,47 @@ Use React Query mutations with loading states for payment processing.
 ## 📋 Phase 4: Waiter App (React Native Expo)
 
 ### **Prompt 4.1 — Expo Project Setup & Navigation**
+
 ```
 Initialize the Waiter mobile application:
 
 1. **Project Structure**:
-   ```
-   src/
-     app/                    # Expo Router
-       (tabs)/               # Main navigation
-         tables.tsx          # Table selection
-         orders.tsx          # Active orders
-         account.tsx         # Profile/logout
-       order/
-         [id].tsx            # Order detail/modification
-         new.tsx             # Create order flow
-       payment/
-         confirm.tsx         # Payment request screen
-   ```
+```
+
+src/
+app/ # Expo Router
+(tabs)/ # Main navigation
+tables.tsx # Table selection
+orders.tsx # Active orders
+account.tsx # Profile/logout
+order/
+[id].tsx # Order detail/modification
+new.tsx # Create order flow
+payment/
+confirm.tsx # Payment request screen
+
+```
 
 2. **Navigation Setup**:
-   - Bottom tabs: Tables, Orders, Account
-   - Stack navigation for order creation flow
-   - Deep linking support for notifications
+- Bottom tabs: Tables, Orders, Account
+- Stack navigation for order creation flow
+- Deep linking support for notifications
 
 3. **State Management**:
-   - Zustand for global state (current user, active orders)
-   - React Query for server state
-   - AsyncStorage for offline queue (if connection drops)
+- Zustand for global state (current user, active orders)
+- React Query for server state
+- AsyncStorage for offline queue (if connection drops)
 
 4. **Authentication**:
-   - PIN login screen (4-digit numeric input)
-   - Biometric fallback (optional)
-   - Auto-logout after 8 hours
+- PIN login screen (4-digit numeric input)
+- Biometric fallback (optional)
+- Auto-logout after 8 hours
 
 Deliver: Complete navigation structure with TypeScript types.
 ```
 
 ### **Prompt 4.2 — Table & Order Creation Flow**
+
 ```
 Build the order taking interface:
 
@@ -316,6 +330,7 @@ Use React Native Paper or native components, ensure 60fps scrolling.
 ```
 
 ### **Prompt 4.3 — Kitchen Bluetooth Printing**
+
 ```
 Implement thermal printing from Waiter App:
 
@@ -325,34 +340,37 @@ Implement thermal printing from Waiter App:
    - Connection status indicator in header
 
 2. **Print Formatting**:
-   ```
-   KITCHEN ORDER
-   Table: 5 | Order #123
-   Waiter: John
-   Time: 14:30
-   
-   2x Chicken Curry
-   Note: Extra spicy
-   
-   1x Iced Tea
-   
-   ----------------
-   ```
-   
+```
+
+KITCHEN ORDER
+Table: 5 | Order #123
+Waiter: John
+Time: 14:30
+
+2x Chicken Curry
+Note: Extra spicy
+
+1x Iced Tea
+
+---
+
+```
+
 3. **Print Triggers**:
-   - Auto-print on order submission
-   - Manual reprint option in order details
-   - Queue system: If printer offline, queue and retry
+- Auto-print on order submission
+- Manual reprint option in order details
+- Queue system: If printer offline, queue and retry
 
 4. **Error Handling**:
-   - Alert if printer not connected
-   - Option to skip printing and rely on dashboard only
-   - Vibration feedback on successful print
+- Alert if printer not connected
+- Option to skip printing and rely on dashboard only
+- Vibration feedback on successful print
 
 Note: Test with actual ESC/POS commands for 58mm/80mm thermal printers.
 ```
 
 ### **Prompt 4.4 — Delivery & Payment Workflow**
+
 ```
 Create the service completion flow:
 
@@ -387,13 +405,14 @@ Implement pull-to-refresh and optimistic updates for better UX.
 ## 📋 Phase 5: Integration & Features
 
 ### **Prompt 5.1 — Time Alerts & Notifications**
+
 ```
 Implement delayed order warnings:
 
 1. **Background Logic**:
    - Calculate: Current Time - Order Time > Preparation Time
    - Check every minute using setInterval or background tasks
-   
+
 2. **Visual Alerts**:
    - Admin Dashboard: Red flashing border on delayed orders, sound alert
    - Waiter App: Push notification + in-app banner
@@ -408,27 +427,29 @@ Use Expo Notifications for mobile alerts when app in background.
 ```
 
 ### **Prompt 5.2 — Offline Support & Sync**
+
 ```
 Build resilience for network issues:
 
 1. **Offline Queue**:
    - If socket disconnected, queue actions in AsyncStorage
    - Actions: Create Order, Deliver Item, Request Payment
-   
+
 2. **Sync on Reconnect**:
    - Auto-retry queued actions
    - Conflict resolution: If order modified offline and online, merge carefully
-   
+
 3. **Optimistic UI**:
    - Show orders as "sent" immediately, sync in background
    - Error states if submission fails after retry
-   
+
 4. **Connection Status**:
    - Green/red indicator in app header
    - Banner when "Offline mode active"
 ```
 
 ### **Prompt 5.3 — Security & Data Integrity**
+
 ```
 Harden the system:
 
@@ -440,11 +461,11 @@ Harden the system:
 2. **PIN Security**:
    - bcrypt hashing for PINs (treat as passwords)
    - Rate limiting on login attempts (5 tries, then 5-min lockout)
-   
+
 3. **Audit Integrity**:
    - Append-only audit logs (soft delete only)
    - Digital signatures for critical actions (optional)
-   
+
 4. **Role Enforcement**:
    - Middleware checks on every API route
    - Client-side role display but never trust client for permissions
@@ -455,6 +476,7 @@ Harden the system:
 ## 📋 Phase 6: Deployment & DevOps
 
 ### **Prompt 6.1 — Deployment Setup**
+
 ```
 Production deployment configuration:
 
@@ -482,6 +504,7 @@ Production deployment configuration:
 ```
 
 ### **Prompt 6.2 — Testing Strategy**
+
 ```
 Comprehensive testing:
 
@@ -508,19 +531,14 @@ Comprehensive testing:
 ## 🎯 Quick Start Sequence
 
 **Week 1: Core Flow**
+
 1. Database schema → Backend API (Orders, Auth) → Basic Admin UI
 2. Socket.io setup for real-time
 
-**Week 2: Mobile & Integration**
-3. Expo app skeleton → Order creation → Bluetooth printing
-4. Connect mobile to API, test end-to-end
+**Week 2: Mobile & Integration** 3. Expo app skeleton → Order creation → Bluetooth printing 4. Connect mobile to API, test end-to-end
 
-**Week 3: Business Logic**
-5. Payment workflow (two-step authorization)
-6. Audit logging and reporting
+**Week 3: Business Logic** 5. Payment workflow (two-step authorization) 6. Audit logging and reporting
 
-**Week 4: Polish & Deploy**
-7. Time alerts, offline mode
-8. Testing, deployment, staff training
+**Week 4: Polish & Deploy** 7. Time alerts, offline mode 8. Testing, deployment, staff training
 
 **Critical Path:** The "Single Active Order per Table" constraint and Payment Authorization flow are your core differentiators—implement these first and test thoroughly with edge cases (network drops mid-payment, etc.).
