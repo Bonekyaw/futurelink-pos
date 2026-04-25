@@ -101,7 +101,7 @@ Create the core order business logic with strict validation:
 - Calculate subtotal, tax, total
 - Return printable bill structure
 
-Use tRPC or standard REST with Zod validation. Ensure all endpoints verify user permissions.
+Use standard REST with Zod validation. Ensure all endpoints verify user permissions.
 ```
 
 ### **Prompt 2.3 — Kitchen Display & Delivery System**
