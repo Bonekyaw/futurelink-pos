@@ -6,6 +6,7 @@ import { jsonUnauthorized } from "@/lib/auth/http";
 import { emitToRestaurant } from "@/lib/realtime/emit";
 import { ServerEventType } from "@shared/socket-events";
 import { Prisma } from "@/app/generated/prisma/client";
+import { snapshotOrder, writeAuditLog } from "@/lib/audit";
 
 const addItemsSchema = z.object({
   items: z.array(z.object({
@@ -48,6 +49,10 @@ export async function PATCH(
       return NextResponse.json({ error: "Can only add items to PENDING or COOKING orders" }, { status: 400 });
     }
 
+    if (order.paymentStatus === "PENDING_CONFIRMATION" || order.paymentStatus === "CONFIRMED") {
+      return NextResponse.json({ error: "Cannot modify order while payment is pending or confirmed" }, { status: 409 });
+    }
+
     // Fetch menu items to get prices
     const menuItemIds = [...new Set(data.items.map(i => i.menuItemId))];
     const menuItems = await prisma.menuItem.findMany({
@@ -61,6 +66,9 @@ export async function PATCH(
     const itemPriceMap = new Map<string, Prisma.Decimal>(menuItems.map(m => [m.id, m.price]));
 
     const updatedOrder = await prisma.$transaction(async (tx) => {
+      // Capture before state
+      const beforeSnapshot = await snapshotOrder(id, tx);
+
       let addedAmount = new Prisma.Decimal(0);
       
       for (const itemToAdd of data.items) {
@@ -102,22 +110,19 @@ export async function PATCH(
       const finalOrder = await tx.order.update({
         where: { id },
         data: {
-          totalAmount: newTotalAmount,
-          auditLogs: {
-            create: {
-              userId: session.user.id,
-              action: "MODIFY_ORDER",
-              details: {
-                message: "Items added to order",
-                addedItems: data.items
-              }
-            }
-          }
+          totalAmount: newTotalAmount
         },
         include: {
           items: true,
           table: true
         }
+      });
+
+      // Audit log with before/after state
+      const afterSnapshot = await snapshotOrder(id, tx);
+      await writeAuditLog(tx, session.user.id, "MODIFY_ORDER", id, beforeSnapshot, afterSnapshot, {
+        message: "Items added to order",
+        addedItems: data.items
       });
 
       return finalOrder;

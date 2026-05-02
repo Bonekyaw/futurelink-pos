@@ -6,6 +6,7 @@ import { jsonUnauthorized } from "@/lib/auth/http";
 import { emitToKitchen, emitToRestaurant } from "@/lib/realtime/emit";
 import { ServerEventType } from "@shared/socket-events";
 import { Prisma } from "@/app/generated/prisma/client";
+import { snapshotOrder, writeAuditLog } from "@/lib/audit";
 
 const createOrderSchema = z.object({
   tableId: z.string().optional().nullable(),
@@ -89,16 +90,6 @@ export async function POST(request: NextRequest) {
           totalAmount,
           items: {
             create: orderItemsData
-          },
-          auditLogs: {
-            create: {
-              userId: session.user.id,
-              action: "CREATE_ORDER",
-              details: {
-                message: "Order created",
-                itemCount: data.items.length
-              }
-            }
           }
         },
         include: {
@@ -117,6 +108,13 @@ export async function POST(request: NextRequest) {
           }
         });
       }
+
+      // Audit log with full after-state snapshot
+      const afterSnapshot = await snapshotOrder(newOrder.id, tx);
+      await writeAuditLog(tx, session.user.id, "CREATE_ORDER", newOrder.id, null, afterSnapshot, {
+        message: "Order created",
+        itemCount: data.items.length
+      });
 
       return newOrder;
     });

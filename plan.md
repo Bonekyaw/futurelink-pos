@@ -201,7 +201,7 @@ Build the Admin Dashboard UI (Counter Computer):
    - Grid view of all tables (color-coded: Green=Available, Red=Occupied, Yellow=Payment Pending)
    - Quick stats: Active Orders, Pending Payments, Delayed Orders, Today's Revenue
 
-Use shadcn/ui components, Tailwind CSS, and React Query for server state.
+Use shadcn/ui components, Tailwind CSS, and TanStack Query for server state.
 ```
 
 ### **Prompt 3.2 — Table Management View**

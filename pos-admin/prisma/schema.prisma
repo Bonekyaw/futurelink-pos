@@ -40,9 +40,10 @@ enum OrderItemStatus {
   DELIVERED
 }
 
-/// Used for Order.paymentStatus and Payment.status (both PENDING | CONFIRMED).
+/// Used for Order.paymentStatus and Payment.status.
 enum BillPaymentStatus {
   PENDING
+  PENDING_CONFIRMATION
   CONFIRMED
 }
 
@@ -52,6 +53,7 @@ enum AuditAction {
   DELIVER_ITEM
   PAYMENT_INIT
   PAYMENT_CONFIRM
+  PAYMENT_CANCEL
 }
 
 enum PaymentMethod {
