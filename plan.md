@@ -204,6 +204,18 @@ Build the Admin Dashboard UI (Counter Computer):
 Use shadcn/ui components, Tailwind CSS, and TanStack Query for server state.
 ```
 
+### \*\*Prompt 3.1 a - Admin Dashboard Authentication
+
+```
+Refactor the authentication flow in pos-admin Admin Dashboard.
+Just login, no register.
+Setup better-auth library with prisma.
+Firstly, An admin must enter his email at frist screen.
+And then the backend will send him an email OTP using Resend service.
+At second screen, he must verify OTP 6 digits.
+If successful, he will be in Home screen in Admin Dashboard.
+```
+
 ### **Prompt 3.2 — Table Management View**
 
 ```
