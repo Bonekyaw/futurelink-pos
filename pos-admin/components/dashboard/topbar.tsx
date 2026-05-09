@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { SERVER_EVENT_CHANNEL, type ServerEventPayload } from "@shared/socket-events";
+import { authClient } from "@/lib/auth-client";
 
 export function Topbar({ userName }: { userName: string }) {
   const { socket, isConnected } = useSocket();
@@ -59,6 +60,7 @@ export function Topbar({ userName }: { userName: string }) {
   }, [socket, queryClient]);
 
   async function handleLogout() {
+    await authClient.signOut();
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
     router.refresh();

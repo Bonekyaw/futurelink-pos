@@ -9,8 +9,10 @@ export default async function HomePage() {
 
   if (token) {
     try {
-      await verifyAccessToken(token);
-      redirect("/dashboard");
+      const decoded = await verifyAccessToken(token);
+      if (decoded.role === "ADMIN") {
+        redirect("/dashboard");
+      }
     } catch {
       // Invalid token, continue to login
     }
