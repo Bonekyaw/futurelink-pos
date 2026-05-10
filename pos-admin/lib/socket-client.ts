@@ -20,7 +20,7 @@ export function getSocket(token?: string): PosSocket {
   if (socketInstance) return socketInstance;
 
   socketInstance = io({
-    path: "/socket.io",
+    path: "/api/socket",
     autoConnect: false,
     auth: token ? { token } : undefined,
   });

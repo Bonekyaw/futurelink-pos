@@ -30,6 +30,21 @@ export function LoginForm() {
 
     setLoading(true);
     try {
+      // Check if email is admin
+      const checkRes = await fetch("/api/auth/check-admin", {
+        method: "POST",
+        body: JSON.stringify({ email: normalized }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const { isAdmin } = await checkRes.json();
+
+      if (!isAdmin) {
+        toast.error("Access denied", {
+          description: "This email does not have admin privileges or is inactive.",
+        });
+        return;
+      }
+
       const { error } = await authClient.emailOtp.sendVerificationOtp({
         email: normalized,
         type: "sign-in",
@@ -43,9 +58,10 @@ export function LoginForm() {
       toast.success("Check your email", {
         description: "We sent a 6-digit code to your inbox.",
       });
-    } catch {
+    } catch (err) {
+      console.error("Sign-in error:", err);
       toast.error("Sign-in request failed", {
-        description: "If this email is an admin address, you will receive a code shortly.",
+        description: "An error occurred while requesting your sign-in code.",
       });
     } finally {
       setLoading(false);

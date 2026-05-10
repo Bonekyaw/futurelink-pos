@@ -67,7 +67,9 @@ export function OverviewDashboard() {
 
   // Compute quick stats
   const activeOrders = (kitchen.data?.pending?.length ?? 0);
-  const pendingPayments = tables.data?.filter(t => t.currentOrder?.paymentStatus === "PENDING_CONFIRMATION").length ?? 0;
+  const pendingPayments = Array.isArray(tables.data) 
+    ? tables.data.filter(t => t.currentOrder?.paymentStatus === "PENDING_CONFIRMATION").length 
+    : 0;
   const delayedOrders = kitchen.data?.pending?.filter(o => o.isDelayed).length ?? 0;
   const todayRevenue = report.data?.sales?.totalRevenue ?? 0;
 
@@ -107,20 +109,21 @@ export function OverviewDashboard() {
       {/* Quick Stats */}
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title} className="relative overflow-hidden">
-            <CardContent className="p-4">
+          <Card key={stat.title} className="relative overflow-hidden glass-card border-t-0 hover-lift group">
+            <div className={`absolute top-0 left-0 w-full h-1 ${stat.bg.replace('/10', '/50')}`} />
+            <CardContent className="p-5">
               {kitchen.isLoading || report.isLoading ? (
                 <Skeleton className="h-16 w-full" />
               ) : (
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">
                       {stat.title}
                     </p>
-                    <p className="text-2xl font-bold mt-1 tracking-tight">{stat.value}</p>
+                    <p className="text-3xl font-black tracking-tight">{stat.value}</p>
                   </div>
-                  <div className={cn("size-10 rounded-xl flex items-center justify-center", stat.bg)}>
-                    <stat.icon className={cn("size-5", stat.color)} />
+                  <div className={cn("size-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110", stat.bg)}>
+                    <stat.icon className={cn("size-6", stat.color)} />
                   </div>
                 </div>
               )}
@@ -130,11 +133,14 @@ export function OverviewDashboard() {
       </div>
 
       {/* Table Grid */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold">Table Overview</CardTitle>
+      <Card className="glass-card overflow-hidden">
+        <CardHeader className="pb-4 border-b border-white/10 bg-white/40 dark:bg-slate-900/40">
+          <CardTitle className="text-xl font-bold flex items-center gap-2">
+            Table Overview
+            <Badge variant="outline" className="font-normal text-xs ml-2 rounded-full border-primary/20 bg-primary/5 text-primary">Live</Badge>
+          </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {tables.isLoading ? (
             <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
               {Array.from({ length: 12 }).map((_, i) => (
@@ -143,7 +149,7 @@ export function OverviewDashboard() {
             </div>
           ) : (
             <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-              {tables.data?.map((table) => {
+              {(Array.isArray(tables.data) ? tables.data : []).map((table) => {
                 const paymentPending = table.currentOrder?.paymentStatus === "PENDING_CONFIRMATION";
 
                 let statusColor = "bg-emerald-500/15 border-emerald-500/30 text-emerald-700";
@@ -170,22 +176,25 @@ export function OverviewDashboard() {
                   <div
                     key={table.id}
                     className={cn(
-                      "relative flex flex-col items-center justify-center rounded-xl border-2 p-4 transition-all hover:scale-[1.02] hover:shadow-md cursor-pointer",
+                      "relative flex flex-col items-center justify-center rounded-2xl border-2 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer overflow-hidden group",
                       statusColor,
                     )}
                   >
+                    {/* Background Glow */}
+                    <div className={cn("absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity", dotColor.replace('bg-', 'bg-gradient-to-tr from-transparent to-'))} />
+
                     {/* Status dot */}
                     <span
-                      className={cn("absolute top-2 right-2 size-2 rounded-full", dotColor)}
+                      className={cn("absolute top-3 right-3 size-2.5 rounded-full shadow-sm", dotColor)}
                     />
 
-                    <span className="text-2xl font-bold">{table.number}</span>
-                    <span className="text-[10px] font-medium uppercase tracking-widest mt-1">
+                    <span className="text-3xl font-black relative z-10">{table.number}</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest mt-2 relative z-10 opacity-90">
                       {statusLabel}
                     </span>
 
                     {table.currentOrder && (
-                      <Badge variant="secondary" className="mt-2 text-[10px] px-1.5 py-0">
+                      <Badge variant="secondary" className="mt-3 text-xs px-2 py-0.5 bg-background/80 backdrop-blur-sm relative z-10 font-bold border-none shadow-sm">
                         ${Number(table.currentOrder.totalAmount).toFixed(0)}
                       </Badge>
                     )}

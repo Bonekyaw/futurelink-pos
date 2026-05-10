@@ -30,18 +30,36 @@ export async function sendAdminOtpEmail(input: {
     throw new Error("RESEND_API_KEY is not set.");
   }
 
-  const { error } = await resend.emails.send({
-    from,
-    to: input.email,
-    subject: "Your admin sign-in code",
-    html: `
-      <p>Your one-time sign-in code is:</p>
-      <p style="font-size:24px;font-weight:bold;letter-spacing:4px;">${input.otp}</p>
-      <p>This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>
-    `,
-  });
+  try {
+    const { data, error } = await resend.emails.send({
+      from,
+      to: input.email,
+      subject: "Your admin sign-in code",
+      html: `
+        <p>Your one-time sign-in code is:</p>
+        <p style="font-size:24px;font-weight:bold;letter-spacing:4px;">${input.otp}</p>
+        <p>This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>
+      `,
+    });
 
-  if (error) {
-    throw new Error(error.message);
+    if (error) {
+      console.error("Resend API Error:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.info(
+          `[dev fallback] Resend failed, but here is your OTP for ${input.email}: ${input.otp}`,
+        );
+        return;
+      }
+      throw new Error(error.message);
+    }
+  } catch (err: any) {
+    console.error("Resend Connection/Fetch Error:", err);
+    if (process.env.NODE_ENV === "development") {
+      console.info(
+        `[dev fallback] Resend request crashed, but here is your OTP for ${input.email}: ${input.otp}`,
+      );
+      return;
+    }
+    throw err;
   }
 }
